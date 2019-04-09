@@ -11,7 +11,7 @@
 #include <SimpleTimer.h>
 
 // Точка доступа Wi-Fi
-char ssid[] = "IOTIK";
+char ssid[] = "MGBot";
 char pass[] = "Terminator812";
 
 // Параметры IoT сервера
@@ -19,8 +19,8 @@ char auth[] = "180ab65a8b4c4c678cc9806744df443f";
 IPAddress blynk_ip(139, 59, 206, 133);
 
 // АЦП на ADS1015/ADS1115
-//Adafruit_ADS1015 ads1015;
-Adafruit_ADS1115 ads1115;
+Adafruit_ADS1015 ads1015;
+// Adafruit_ADS1115 ads1115;
 
 // Датчик освещенности
 BH1750FVI bh1750;
@@ -33,8 +33,8 @@ Adafruit_BME280 bme280;
 #define RELAY_PIN_2 17
 
 // Датчик влажности почвы емкостной
-const float air_value    = 83900.0;
-const float water_value  = 45000.0;
+const float air_value    = 857.0;
+const float water_value  = 573.0;
 const float moisture_0   = 0.0;
 const float moisture_100 = 100.0;
 
@@ -84,8 +84,8 @@ void setup()
     Serial.println("Could not find a valid BME280 sensor, check wiring!");
 
   // Инициализация АЦП
-  ads1115.setGain(GAIN_TWOTHIRDS);
-  ads1115.begin();
+  ads1015.setGain(GAIN_TWOTHIRDS);
+  ads1015.begin();
 
   // Инициализация таймера
   timer_update.setInterval(UPDATE_TIMER, readSendData);
@@ -121,10 +121,10 @@ void readSendData()
   Blynk.virtualWrite(V4, air_press); delay(25);       // Отправка данных на сервер Blynk
 
   // Считывание АЦП с датчиком почвы
-  float adc1_1 = (float)ads1115.readADC_SingleEnded(0) * 6.144;
-  float adc1_2 = (float)ads1115.readADC_SingleEnded(1) * 6.144;
+  float adc1_1 = (float)ads1015.readADC_SingleEnded(0);
+  float adc1_2 = (float)ads1015.readADC_SingleEnded(1);
   float soil_hum = map(adc1_1, air_value, water_value, moisture_0, moisture_100);
-  float soil_temp = adc1_2 / 1000.0;
+  float soil_temp = adc1_2 / 10.0;
   Serial.print("Soil temperature = ");
   Serial.println(soil_temp);
   Serial.print("Soil moisture = ");
